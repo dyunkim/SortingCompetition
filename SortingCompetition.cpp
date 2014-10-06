@@ -24,7 +24,7 @@ bool SortingCompetition::readData() {
 }
 
 bool SortingCompetition::prepareData() {
-    array = new char*[100];
+    array = new char*[20000000];
     for(int i = 0; i < prePrepare.size(); i++) {
         array[i] = new char[50];
         array[i] = prePrepare.at(i);
@@ -46,7 +46,15 @@ void SortingCompetition::sortData() {
 }
 
 void SortingCompetition::outputData(const string& outputfinName) {
-    
+    ofstream fout(outputfinName);
+    if(!fout.is_open()) {
+        cout << "ERROR" << endl;
+    }
+    else {
+        for(int i = 0; i < prePrepare.size(); i++) {
+            fout << array[i] << endl;
+        }
+    }
 }
 
 SortingCompetition::~SortingCompetition() {
@@ -54,7 +62,8 @@ SortingCompetition::~SortingCompetition() {
 }
 
 void SortingCompetition::quickSort(char ** arr, int left, int right) {
-    int i=left, j=right;
+    int i=left;
+    int j=right;
     char* pivot = arr[(left+right)/2];
     char* temp;
 
@@ -64,26 +73,25 @@ void SortingCompetition::quickSort(char ** arr, int left, int right) {
        {
            i++;
        }
-       if (strlen(arr[i])==strlen(pivot))
-       {
-           while(strcmp(arr[i], pivot) > 0) //if greater or lessthan
-           {
-               i++;
-           }
-       }
-
+//       if (strlen(arr[i])==strlen(pivot))
+//       {
+//           if(strcmp(arr[i], pivot) > 0) //if greater or lessthan
+//           {
+//               i++;
+//           }
+//       }
 
        while(strlen(arr[j]) < strlen(pivot)) //if greater or lessthan
        {
            j--;
        }
-       if (strlen(arr[j])==strlen(pivot))
-       {
-           while(strcmp(arr[j], pivot) > 0) //if greater or lessthan
-           {
-               j--;
-           }
-       }
+//       if (strlen(arr[j])==strlen(pivot))
+//       {
+//           if(strcmp(arr[j], pivot) > 0) //if greater or lessthan
+//           {
+//               j--;
+//           }
+//       }
 
        if (i <= j)
        {

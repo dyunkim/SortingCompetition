@@ -55,19 +55,7 @@ void parse(ifstream& fin, vector<char*>& prePrepare, char**& array)
     {
         array[i]=new char[50];
     }
-    int spot=0;
-    /*while(!fin.eof())
-    {
-        if (fin.peek()=='\n')
-        {
-            fin.ignore();
-        }
-        fin.getline(array[spot],100,' ');
-        spot++;
-    }*/
 
-
-    int i = 0;
     while(!fin.eof()) {
         char* word = new char[50];
         fin >> word;
@@ -79,7 +67,7 @@ void parse(ifstream& fin, vector<char*>& prePrepare, char**& array)
     }
 }
 
-int main()
+/*int main()
 {
     ifstream fin("data.txt");
     char** array=new char*[40];
@@ -91,5 +79,5 @@ int main()
         cout << array[i] << endl;
     delete[] array;
     return 0;
-}
+}*/
 

@@ -5,7 +5,8 @@ CONFIG -= qt
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    SortingCompetition.cpp
+    SortingCompetition.cpp \
+    parseAndQSort.cpp
 
 HEADERS += \
     SortingCompetition.h

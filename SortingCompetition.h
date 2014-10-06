@@ -2,6 +2,8 @@
 #define SORTINGCOMPETITION_H
 #include <string>
 #include <vector>
+#include <fstream>
+#include <cstring>
 
 using namespace std;
 
@@ -17,8 +19,12 @@ public:
     ~SortingCompetition();
     
 private:
-    vector<string> words;
-    istream fin;
+    void quickSort(char**, int, int);
+    vector<char*> prePrepare;
+    ifstream fin;
+    char** array;
+    int left;
+    int right;
 };
 
 #endif // SORTINGCOMPETITION_H

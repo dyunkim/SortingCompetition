@@ -8,6 +8,7 @@ using namespace std;
 
 int main()
 {
+
    SortingCompetition s("input.txt");
    s.readData();
    s.prepareData();

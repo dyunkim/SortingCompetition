@@ -1,9 +1,11 @@
 #include "SortingCompetition.h"
 #include <iostream>
+#include <iomanip>
 
 SortingCompetition::SortingCompetition(const string& inputFileName)
 {
     fin.open(inputFileName);
+
 
 }
 
@@ -13,12 +15,6 @@ void SortingCompetition::setFileName(const string& inputFileName) {
 }
 
 bool SortingCompetition::readData() {
-
-    for (int i=0; i<20; i++)
-    {
-        array[i]=new char[50];
-    }
-
     while(!fin.eof()) {
         char* word = new char[50];
         fin >> word;
@@ -28,18 +24,25 @@ bool SortingCompetition::readData() {
 }
 
 bool SortingCompetition::prepareData() {
-    array = new char*[100]; //TODO: Change to resizable
+    array = new char*[100];
     for(int i = 0; i < prePrepare.size(); i++) {
         array[i] = new char[50];
         array[i] = prePrepare.at(i);
     }
+
+
     left = 0;
-    right = prePrepare.size();
+    right = prePrepare.size() - 1;
     return true;
 }
 
 void SortingCompetition::sortData() {
+
     quickSort(array, left, right);
+
+    for(int i = 0; i < prePrepare.size(); i++) {
+        cout << array[i] << endl;
+    }
 }
 
 void SortingCompetition::outputData(const string& outputfinName) {
@@ -54,6 +57,7 @@ void SortingCompetition::quickSort(char ** arr, int left, int right) {
     int i=left, j=right;
     char* pivot = arr[(left+right)/2];
     char* temp;
+
     while (i<=j)
     {
        while(strlen(arr[i]) > strlen(pivot)) //if greater or lessthan
@@ -67,6 +71,8 @@ void SortingCompetition::quickSort(char ** arr, int left, int right) {
                i++;
            }
        }
+
+
        while(strlen(arr[j]) < strlen(pivot)) //if greater or lessthan
        {
            j--;
@@ -78,6 +84,7 @@ void SortingCompetition::quickSort(char ** arr, int left, int right) {
                j--;
            }
        }
+
        if (i <= j)
        {
            temp=arr[i];

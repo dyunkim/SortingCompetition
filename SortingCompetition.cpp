@@ -24,14 +24,14 @@ bool SortingCompetition::readData() {
 }
 
 bool SortingCompetition::prepareData() {
-    array = new char*[20000000];
-    for(int i = 0; i < prePrepare.size(); i++) {
-        array[i] = new char[50];
-        array[i] = prePrepare.at(i);
-    }
+//    array = new char*[prePrepare.size()];
+//    for(int i = 0; i < prePrepare.size(); i++) {
+//        array[i] = new char[50];
+//        array[i] = prePrepare.at(i);
+//    }
 
     //length prefixed char*
-    lenarray = new char*[20000000];
+    lenarray = new char*[prePrepare.size()];
     for(int i = 0; i < prePrepare.size(); i++) {
         lenarray[i] = new char[50];
         for(int j = 0; j < 50; j++) {
@@ -76,9 +76,6 @@ void SortingCompetition::outputData(const string& outputfinName) {
 
 }
 
-SortingCompetition::~SortingCompetition() {
-    
-}
 
 void SortingCompetition::quickSort(char ** arr, int left, int right) {
     int i=left;
@@ -149,4 +146,12 @@ int SortingCompetition::pstrcmp(char * first, char * second) {
         }
     }
     return 0;
+}
+
+SortingCompetition::~SortingCompetition() {
+    for(int i = 0; i < prePrepare.size(); i++) {
+        delete [] prePrepare.at(i);
+        delete [] lenarray[i];
+    }
+    delete lenarray;
 }

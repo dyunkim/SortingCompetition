@@ -22,6 +22,7 @@ private:
     void quickSort(char**, int, int);
     vector<char*> prePrepare;
     ifstream fin;
+    void resize(char**&, int&);
     char** lenarray;
     char** array;
     int left;

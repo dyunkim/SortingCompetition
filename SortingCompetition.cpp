@@ -50,8 +50,9 @@ bool SortingCompetition::prepareData() {
 
 void SortingCompetition::sortData() {
 
-   //quickSort(lenarray, left, right);
-    selectionSort(lenarray, right + 1);
+    //quickSort(lenarray, left, right);
+    //selectionSort(lenarray, right + 1);
+    bubbleSort(lenarray, right + 1);
 
 
 }
@@ -172,6 +173,31 @@ void SortingCompetition::selectionSort(char **& arr, int size) {       //impleme
     else {
         moveLargest(arr, size);
         selectionSort(arr, size - 1);
+    }
+}
+void SortingCompetition::bubbleSort(char **& arr, int size) {
+    bool swapped = true;
+    int j = 0;
+    char* temp = new char[50];
+    while(swapped) {
+        swapped = false;
+        j++;                                            //counter
+        for (int i = 0; i < size - j; i++) {
+            if(getpstrlen(arr[i]) < getpstrlen(arr[i + 1])) {   // compare one length to the next
+                temp = arr[i];          //swap
+                arr[i] = arr[i + 1];
+                arr[i + 1] = temp;
+                swapped = true;
+            }
+            else if(getpstrlen(arr[i]) == getpstrlen(arr[i + 1])) { //if lengths are equal
+                if(pstrcmp(arr[i], arr[i + 1]) < 0) {       //compare alphabetically
+                    temp = arr[i];      //swap
+                    arr[i] = arr[i+ 1];
+                    arr[i + 1] = temp;
+                    swapped = true;
+                }
+            }
+        }
     }
 }
 

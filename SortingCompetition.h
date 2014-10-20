@@ -22,6 +22,7 @@ private:
     void quickSort(char**, int, int);       //quick sort implementation
     void moveLargest(char**&, int);         //additional method for selection sort
     void selectionSort(char**&, int);       //selection sort implementation
+    void bubbleSort(char**&, int);
     vector<char*> prePrepare;           //vector that reads in file data
     ifstream fin;
     char** lenarray;                //array for length prefixed strings
@@ -31,6 +32,7 @@ private:
 
     int getpstrlen(char*);          //gets length of length prefixed string
     int pstrcmp(char*, char*);      //compares two length prefixed strings
+
 };
 
 #endif // SORTINGCOMPETITION_H

@@ -19,17 +19,18 @@ public:
     ~SortingCompetition();
     
 private:
-    void quickSort(char**, int, int);
-    vector<char*> prePrepare;
+    void quickSort(char**, int, int);       //quick sort implementation
+    void moveLargest(char**&, int);         //additional method for selection sort
+    void selectionSort(char**&, int);       //selection sort implementation
+    vector<char*> prePrepare;           //vector that reads in file data
     ifstream fin;
-    void resize(char**&, int&);
-    char** lenarray;
-    char** array;
-    int left;
+    char** lenarray;                //array for length prefixed strings
+    char** array;               //array that has the prepared data
+    int left;                   //bounds of array
     int right;
 
-    int getpstrlen(char*);
-    int pstrcmp(char*, char*);
+    int getpstrlen(char*);          //gets length of length prefixed string
+    int pstrcmp(char*, char*);      //compares two length prefixed strings
 };
 
 #endif // SORTINGCOMPETITION_H

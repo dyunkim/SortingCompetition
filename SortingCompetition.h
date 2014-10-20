@@ -22,9 +22,13 @@ private:
     void quickSort(char**, int, int);
     vector<char*> prePrepare;
     ifstream fin;
+    char** lenarray;
     char** array;
     int left;
     int right;
+
+    int getpstrlen(char*);
+    int pstrcmp(char*, char*);
 };
 
 #endif // SORTINGCOMPETITION_H

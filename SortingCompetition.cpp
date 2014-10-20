@@ -30,6 +30,18 @@ bool SortingCompetition::prepareData() {
         array[i] = prePrepare.at(i);
     }
 
+    //length prefixed char*
+    lenarray = new char*[20000000];
+    for(int i = 0; i < prePrepare.size(); i++) {
+        lenarray[i] = new char[50];
+        for(int j = 0; j < 50; j++) {
+            lenarray[i][j] = 0;
+        }
+        lenarray[i][0] = strlen(prePrepare.at(i));
+        for(int j = 0; j < strlen(prePrepare.at(i)) + 1; j++) {
+            lenarray[i][j + 1] = prePrepare.at(i)[j];
+        }
+    }
 
     left = 0;
     right = prePrepare.size() - 1;
@@ -38,23 +50,30 @@ bool SortingCompetition::prepareData() {
 
 void SortingCompetition::sortData() {
 
-    quickSort(array, left, right);
+   quickSort(lenarray, left, right);
 
-    for(int i = 0; i < prePrepare.size(); i++) {
-        cout << array[i] << endl;
-    }
+
 }
 
 void SortingCompetition::outputData(const string& outputfinName) {
     ofstream fout(outputfinName);
     if(!fout.is_open()) {
-        cout << "ERROR" << endl;
+        cout << "ERROR OPENING OUTPUT FILE" << endl;
     }
+//    else{
+//        for(int i = 0; i < prePrepare.size(); i++) {
+//            fout << array[i] << endl;
+//        }
+//    }
     else {
         for(int i = 0; i < prePrepare.size(); i++) {
-            fout << array[i] << endl;
+            for(int j = 1; j < lenarray[i][0] + 1; j++) {
+                fout << lenarray[i][j];
+            }
+            fout << endl;
         }
     }
+
 }
 
 SortingCompetition::~SortingCompetition() {
@@ -69,11 +88,11 @@ void SortingCompetition::quickSort(char ** arr, int left, int right) {
 
     while (i<=j)
     {
-       while(strlen(arr[i]) > strlen(pivot)) //if greater or lessthan
+       while(getpstrlen(arr[i]) > getpstrlen(pivot)) //if greater or lessthan
        {
            i++;
        }
-//       if (strlen(arr[i])==strlen(pivot))
+//       if (pstrlen(arr[i])==pstrlen(pivot))
 //       {
 //           if(strcmp(arr[i], pivot) > 0) //if greater or lessthan
 //           {
@@ -81,11 +100,11 @@ void SortingCompetition::quickSort(char ** arr, int left, int right) {
 //           }
 //       }
 
-       while(strlen(arr[j]) < strlen(pivot)) //if greater or lessthan
+       while(getpstrlen(arr[j]) < getpstrlen(pivot)) //if greater or lessthan
        {
            j--;
        }
-//       if (strlen(arr[j])==strlen(pivot))
+//       if (pstrlen(arr[j])==pstrlen(pivot))
 //       {
 //           if(strcmp(arr[j], pivot) > 0) //if greater or lessthan
 //           {
@@ -106,4 +125,28 @@ void SortingCompetition::quickSort(char ** arr, int left, int right) {
         quickSort(arr, left, j);
     if (i < right)
         quickSort(arr, i, right);
+}
+
+int SortingCompetition::getpstrlen(char * word) {
+    return word[0];
+}
+
+int SortingCompetition::pstrcmp(char * first, char * second) {
+
+    int length = 0;
+    if (first[0] > second[0]) {
+        length = first[0];
+    }
+    else {
+        length = second[0];
+    }
+    for(int i = 1; i < length + 1; i++) {
+        if(first[i] < second[i]) {
+            return -1;
+        }
+        else if(second[i] < first[i]) {
+            return 1;
+        }
+    }
+    return 0;
 }

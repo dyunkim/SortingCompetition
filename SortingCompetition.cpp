@@ -1,10 +1,12 @@
 #include "SortingCompetition.h"
 #include <iostream>
 #include <iomanip>
+#include <omp.h>
 
 SortingCompetition::SortingCompetition(const string& inputFileName)
 {
     fin.open(inputFileName);
+    omp_set_num_threads(4);
 
 
 }
@@ -24,11 +26,6 @@ bool SortingCompetition::readData() {
 }
 
 bool SortingCompetition::prepareData() {
-//    array = new char*[prePrepare.size()];
-//    for(int i = 0; i < prePrepare.size(); i++) {
-//        array[i] = new char[50];
-//        array[i] = prePrepare.at(i);
-//    }
 
     //length prefixed char* implementation
     lenarray = new char*[prePrepare.size()];
@@ -42,17 +39,12 @@ bool SortingCompetition::prepareData() {
             lenarray[i][j + 1] = prePrepare.at(i)[j];       //copy rest of the data
         }
     }
-
-    left = 0;                   //define bounds
-    right = prePrepare.size() - 1;
     return true;
 }
 
 void SortingCompetition::sortData() {
 
-    //quickSort(lenarray, left, right);
-    //selectionSort(lenarray, right + 1);
-    bubbleSort(lenarray, right + 1);
+    quickSortOmp(lenarray, prePrepare.size());
 
 
 }
@@ -62,11 +54,7 @@ void SortingCompetition::outputData(const string& outputfinName) {
     if(!fout.is_open()) {
         cout << "ERROR OPENING OUTPUT FILE" << endl;
     }
-//    else{
-//        for(int i = 0; i < prePrepare.size(); i++) {
-//            fout << array[i] << endl;
-//        }
-//    }
+
     else {
         for(int i = 0; i < prePrepare.size(); i++) {        //special file out for length prefixed
             for(int j = 1; j < lenarray[i][0] + 1; j++) {
@@ -79,52 +67,84 @@ void SortingCompetition::outputData(const string& outputfinName) {
 }
 
 
-void SortingCompetition::quickSort(char ** arr, int left, int right) {
-    int i=left;
-    int j=right;
-    char* pivot = arr[(left+right)/2];
-    char* temp;
-
-    while (i<=j)
-    {
-       while(getpstrlen(arr[i]) > getpstrlen(pivot)) //if greater or lessthan
-       {
-           i++;
-       }
-//       if (pstrlen(arr[i])==pstrlen(pivot))
-//       {
-//           if(strcmp(arr[i], pivot) > 0) //if greater or lessthan
-//           {
-//               i++;
-//           }
-//       }
-
-       while(getpstrlen(arr[j]) < getpstrlen(pivot)) //if greater or lessthan
-       {
-           j--;
-       }
-//       if (pstrlen(arr[j])==pstrlen(pivot))
-//       {
-//           if(strcmp(arr[j], pivot) > 0) //if greater or lessthan
-//           {
-//               j--;
-//           }
-//       }
-
-       if (i <= j)
-       {
-           temp=arr[i];
-           arr[i]=arr[j];
-           arr[j]=temp;
-           i++;
-           j--;
-       }
-    }
-    if (left < j)
-        quickSort(arr, left, j);
-    if (i < right)
-        quickSort(arr, i, right);
+/** Swap to value */
+template <class NumType>
+inline void Swap(NumType& value, NumType& other)
+{
+    NumType temp = value;
+    value = other;
+    other = temp;
 }
+
+
+int SortingCompetition::QsPartition(char** arr, int l, int h)
+{
+    char* x = arr[h];    // pivot
+    int i = (l - 1);  // Index of smaller element
+
+    for (int j = l; j <= h- 1; j++)
+    {
+        // If current element is smaller than or equal to pivot
+        if (getpstrlen(arr[j]) <= getpstrlen(x))
+        {
+            if (getpstrlen(arr[j]) == getpstrlen(x) && pstrcmp(arr[j],x)<0)
+            {
+                    i++;    // increment index of smaller element
+                    Swap(arr[i], arr[j]);  // Swap current element with index
+                }
+                if (getpstrlen(arr[j]) < getpstrlen(x))
+                {
+                    i++;    // increment index of smaller element
+                    Swap(arr[i], arr[j]);  // Swap current element with index
+                }
+            }
+        }
+        Swap(arr[i + 1], arr[h]);
+        return (i + 1);
+    }
+
+    /* a sequential qs */
+
+    void SortingCompetition::QsSequential(char** array, int left, int right){
+        if(left < right){
+            int part = QsPartition(array, left, right);
+            QsSequential(array,left,part - 1);
+            QsSequential(array,part + 1,right);
+        }
+    }
+
+    /** A task dispatcher */
+    void SortingCompetition::QuickSortOmpTask(char** array, int left, int right, const int deep){
+        if(left < right){
+            int part = QsPartition(array, left, right);
+            if( deep ){
+                #pragma omp task
+                QuickSortOmpTask(array,part + 1,right, deep - 1);
+                #pragma omp task
+                QuickSortOmpTask(array,left,part - 1, deep - 1);
+            }
+            else {
+                QsSequential(array,part + 1,right);
+                QsSequential(array,left,part - 1);
+            }
+        }
+    }
+
+    /** The openmp quick sort */
+    void SortingCompetition::quickSortOmp(char** array, int size){
+        const int nbTasksRequired = (omp_get_max_threads() * 5);
+        int deep = 0;
+        while( (1 << deep) < nbTasksRequired ) deep += 1;
+
+        #pragma omp parallel
+        {
+            #pragma omp single nowait
+            {
+                QuickSortOmpTask(array, 0, size - 1 , deep);
+            }
+        }
+    }
+
 
 int SortingCompetition::getpstrlen(char * word) {
     return word[0];                 //return length of string
@@ -150,56 +170,8 @@ int SortingCompetition::pstrcmp(char * first, char * second) {
     return 0;                   //equal strings
 }
 
-void SortingCompetition::moveLargest(char **& arr, int size) {
-    int index = size - 1;
-    char* temp = new char[50];
-    for(int i = index - 1; i >=0; i--) {
-        if(getpstrlen(arr[index]) > getpstrlen(arr[i])) {       //order by length
-            index = i;
-        }
-        else if(getpstrlen(arr[index]) == getpstrlen(arr[i])) { //if same length, order by alphabet
-            if(pstrcmp(arr[index], arr[i]) < 0) {
-                index = i;
-            }
-        }
-    }
-    temp = arr[index];          //swap
-    arr[index] = arr[size - 1];
-    arr[size - 1] = temp;
-}
 
-void SortingCompetition::selectionSort(char **& arr, int size) {       //implementation for selection Sorting
-    if (size == 1) return;      //base case
-    else {
-        moveLargest(arr, size);
-        selectionSort(arr, size - 1);
-    }
-}
-void SortingCompetition::bubbleSort(char **& arr, int size) {
-    bool swapped = true;
-    int j = 0;
-    char* temp = new char[50];
-    while(swapped) {
-        swapped = false;
-        j++;                                            //counter
-        for (int i = 0; i < size - j; i++) {
-            if(getpstrlen(arr[i]) < getpstrlen(arr[i + 1])) {   // compare one length to the next
-                temp = arr[i];          //swap
-                arr[i] = arr[i + 1];
-                arr[i + 1] = temp;
-                swapped = true;
-            }
-            else if(getpstrlen(arr[i]) == getpstrlen(arr[i + 1])) { //if lengths are equal
-                if(pstrcmp(arr[i], arr[i + 1]) < 0) {       //compare alphabetically
-                    temp = arr[i];      //swap
-                    arr[i] = arr[i+ 1];
-                    arr[i + 1] = temp;
-                    swapped = true;
-                }
-            }
-        }
-    }
-}
+
 
 SortingCompetition::~SortingCompetition() {
     for(int i = 0; i < prePrepare.size(); i++) {

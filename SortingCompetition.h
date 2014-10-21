@@ -5,6 +5,7 @@
 #include <fstream>
 #include <cstring>
 
+/*authored by David Kim and JD Francis*/
 using namespace std;
 
 class SortingCompetition
